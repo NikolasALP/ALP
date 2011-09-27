@@ -15,7 +15,7 @@
 package com.lohika.alp.log.elements;
 
 import java.util.List;
-
+// check commit
 
 public interface LogElementsFactory {
 
