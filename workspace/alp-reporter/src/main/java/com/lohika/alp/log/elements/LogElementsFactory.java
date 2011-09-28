@@ -15,14 +15,13 @@
 package com.lohika.alp.log.elements;
 
 import java.util.List;
-// check commit
 
 public interface LogElementsFactory {
 
 	public Object textArea(String name, String content);
-	
+
 	public Object link(String url);
-	
+
 	public Object link(String url, String description);
 
 	public Object screenshot(String url, String description);

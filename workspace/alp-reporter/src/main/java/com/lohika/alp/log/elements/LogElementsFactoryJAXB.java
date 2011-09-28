@@ -14,7 +14,6 @@
 //    along with ALP.  If not, see <http://www.gnu.org/licenses/>.
 package com.lohika.alp.log.elements;
 
-// 1111
 import java.util.List;
 
 import com.lohika.alp.log.elements.schema.Blockstyle;
