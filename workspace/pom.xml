@@ -15,5 +15,38 @@
     <module>alp-reporter-fe</module>
   </modules>
   
-  
+ <distributionManagement>
+	<repository>
+	  <id>alp.internal</id>
+	  <name>Archiva Managed Internal Repository</name>
+	  <url>http://alp-repo:8080/archiva/repository/internal/</url>
+	  <releases>
+	    <enabled>true</enabled>
+	  </releases>
+	  <snapshots>
+	    <enabled>false</enabled>
+	  </snapshots>
+	</repository>
+	<repository>
+	  <id>alp.snapshots</id>
+	  <name>Archiva Managed Snapshot Repository</name>
+	  <url>http://alp-repo:8080/archiva/repository/snapshots/</url>
+	  <releases>
+	    <enabled>false</enabled>
+	  </releases>
+	  <snapshots>
+	    <enabled>true</enabled>
+	  </snapshots>
+	</repository>
+<!--
+	<site>
+		<id>my-repository-server</id>
+		<name>MY Sites</name>
+		<url>
+			scp://meinServer/srv/www/htdocs/lg-app/maven/sites/major/${project.version}/
+		</url>
+	</site>
+-->
+</distributionManagement>
+	
 </project>
