@@ -15,15 +15,4 @@
     <module>alp-reporter-fe</module>
   </modules>
   
- 	<distributionManagement>
-		<repository>
-			<id>alp.internal</id>
-			<url>http://alp-repo:8080/archiva/repository/internal</url>
-		</repository>
-		<snapshotRepository>
-			<id>alp.snapshots</id>
-			<url>http://alp-repo:8080/archiva/repository/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 </project>
