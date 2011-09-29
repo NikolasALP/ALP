@@ -14,5 +14,13 @@
     <module>alp-utils</module>
     <module>alp-reporter-fe</module>
   </modules>
-  
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-deploy-plugin</artifactId>
+			<version>2.6</version>
+		</dependency>
+	</dependencies>
+
 </project>
