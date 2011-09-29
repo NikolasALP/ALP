@@ -14,15 +14,12 @@
 //    along with ALP.  If not, see <http://www.gnu.org/licenses/>.
 package alp.lohika.com.utils.object.reader;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
-import alp.lohika.com.utils.object.reader.ExcelReader;
-import alp.lohika.com.utils.object.reader.model.User;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import alp.lohika.com.utils.object.reader.model.User;
 
 /**
  * Unit test for simple App.
