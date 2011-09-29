@@ -14,6 +14,7 @@
 //    along with ALP.  If not, see <http://www.gnu.org/licenses/>.
 package com.lohika.alp.log.elements;
 
+// 1111
 import java.util.List;
 
 import com.lohika.alp.log.elements.schema.Blockstyle;
@@ -37,7 +38,7 @@ public class LogElementsFactoryJAXB implements LogElementsFactory {
 
 	@Override
 	public Object link(String url) {
-		return link(url,null);
+		return link(url, null);
 	}
 
 	@Override
