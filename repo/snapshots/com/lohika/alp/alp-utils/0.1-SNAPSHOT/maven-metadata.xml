@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>com.lohika.alp</groupId>
+  <artifactId>alp-utils</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20110930.151648</timestamp>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <lastUpdated>20110930151648</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>0.1-20110930.151648-1</value>
+        <updated>20110930151648</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>0.1-20110930.151648-1</value>
+        <updated>20110930151648</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>
