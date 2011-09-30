@@ -7,6 +7,14 @@
 	<name>ALP Reporter Database Integration</name>
 	<version>0.5-SNAPSHOT</version>
 
+	<repositories>
+		<repository>
+		  <id>alp-repo</id>
+		  <name>ALP repository on GitHub</name>
+		  <url>https://github.com/lohika/ALP/tree/gh-pages/repo/releases/</url>
+		</repository>
+	</repositories>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -98,5 +106,14 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.1</version>
 		</dependency>
-	</dependencies>	
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>jta</artifactId>
+			<version>1.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+	
+		
 </project>
