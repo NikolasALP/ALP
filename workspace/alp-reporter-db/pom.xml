@@ -5,7 +5,7 @@
 	<groupId>com.lohika.alp</groupId>
 	<artifactId>alp-reporter-db</artifactId>
 	<name>ALP Reporter Database Integration</name>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.6</version>
 
 	<repositories>
 		<repository>
@@ -56,13 +56,13 @@
 		<dependency>
 			<groupId>com.lohika.alp</groupId>
 			<artifactId>alp-reporter</artifactId>
-			<version>0.5-SNAPSHOT</version>
+			<version>0.6</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.lohika.alp</groupId>
 			<artifactId>alp-reporter-client</artifactId>
-			<version>0.5-SNAPSHOT</version>
+			<version>0.6</version>
 		</dependency>
 
 		<dependency>

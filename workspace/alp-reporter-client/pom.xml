@@ -4,7 +4,7 @@
 
 	<groupId>com.lohika.alp</groupId>
 	<artifactId>alp-reporter-client</artifactId>
-	<version>0.4</version>
+	<version>0.6</version>
 	<packaging>jar</packaging>
 
 	<name>ALP Reporter Client</name>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>com.lohika.alp</groupId>
 			<artifactId>alp-reporter</artifactId>
-			<version>0.5-SNAPSHOT</version>
+			<version>0.6</version>
 		</dependency>
 
 		<dependency>
@@ -83,16 +83,5 @@
 			<artifactId>httpmime</artifactId>
 			<version>4.1</version>
 		</dependency>
-	</dependencies>
-
-	<distributionManagement>
-		<repository>
-			<id>alp.internal</id>
-			<url>http://alp-repo:8080/archiva/repository/internal</url>
-		</repository>
-		<snapshotRepository>
-			<id>alp.snapshots</id>
-			<url>http://alp-repo:8080/archiva/repository/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
+	</dependencies>	
 </project>
