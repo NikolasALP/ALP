@@ -24,13 +24,14 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.internal.IConfigurationListener;
+import org.testng.internal.IResultListener;
 import org.testng.log4testng.Logger;
 import org.testng.xml.XmlSuite;
 
 import com.lohika.alp.log4j.AppendersCloser;
 
 public class Reporter implements ISuiteListener, ITestListener,
-		IConfigurationListener, IReporter {
+		IConfigurationListener, IReporter, IResultListener {
 
 	private Logger logger = Logger.getLogger(getClass());
 
