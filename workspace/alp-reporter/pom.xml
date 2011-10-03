@@ -9,7 +9,7 @@
 		<repository>
 		  <id>alp-repo</id>
 		  <name>ALP repository on GitHub</name>
-		  <url>https://github.com/lohika/ALP/tree/gh-pages/repo/releases/</url>
+		  <url>http://lohika.github.com/ALP/repo/releases/</url>
 		</repository>
 	</repositories>
 	<build>
