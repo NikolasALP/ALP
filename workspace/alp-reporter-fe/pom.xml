@@ -4,14 +4,14 @@
 	<groupId>com.lohika.alp</groupId>
 	<artifactId>alp-reporter-fe</artifactId>
 	<packaging>war</packaging>
-	<version>0.4</version>
+	<version>0.6</version>
 	<name>ALP Reporter Frontend</name>
 	
 	<repositories>
 		<repository>
 		  <id>alp-repo</id>
 		  <name>ALP repository on GitHub</name>
-		  <url>https://github.com/lohika/ALP/tree/gh-pages/repo/releases/</url>
+		  <url>http://lohika.github.com/ALP/repo/releases/</url>
 		</repository>
 	</repositories>
 	
@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>com.lohika.alp</groupId>
 			<artifactId>alp-reporter-db</artifactId>
-			<version>0.4</version>
+			<version>0.6</version>
 		</dependency>
 
 		<dependency>
@@ -109,7 +109,7 @@
 		<dependency>
 			<groupId>com.lohika.alp</groupId>
 			<artifactId>alp-reporter</artifactId>
-			<version>0.4</version>
+			<version>0.6</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -162,12 +162,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>jta</groupId>
-			<artifactId>jta</artifactId>
-			<version>1.0.1b</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
@@ -185,6 +179,13 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>jta</artifactId>
+			<version>1.1</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>

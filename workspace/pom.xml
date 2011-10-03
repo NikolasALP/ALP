@@ -15,12 +15,12 @@
     <module>alp-reporter-fe</module>
   </modules>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-deploy-plugin</artifactId>
-			<version>2.6</version>
-		</dependency>
-	</dependencies>
+	<repositories>
+		<repository>
+		  <id>alp-repo</id>
+		  <name>ALP repository on GitHub</name>
+		  <url>http://lohika.github.com/ALP/repo/releases/</url>
+		</repository>
+	</repositories>
 
 </project>
