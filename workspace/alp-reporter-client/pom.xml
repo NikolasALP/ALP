@@ -6,17 +6,7 @@
 	<artifactId>alp-reporter-client</artifactId>
 	<version>0.6</version>
 	<packaging>jar</packaging>
-
-	<name>ALP Reporter Client</name>
-	
-	<repositories>
-		<repository>
-		  <id>alp-repo</id>
-		  <name>ALP repository on GitHub</name>
-		  <url>https://github.com/lohika/ALP/tree/gh-pages/repo/releases/</url>
-		</repository>
-	</repositories>
-	
+	<name>ALP Reporter Client</name>	
 	<build>
 		<plugins>
 			<plugin>
@@ -50,14 +40,12 @@
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
 	<dependencies>
-		<dependency>
-			<groupId>com.lohika.alp</groupId>
-			<artifactId>alp-reporter</artifactId>
-			<version>0.6</version>
+	<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>

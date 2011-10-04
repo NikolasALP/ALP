@@ -6,15 +6,6 @@
 	<artifactId>alp-reporter-db</artifactId>
 	<name>ALP Reporter Database Integration</name>
 	<version>0.6</version>
-
-	<repositories>
-		<repository>
-		  <id>alp-repo</id>
-		  <name>ALP repository on GitHub</name>
-		  <url>https://github.com/lohika/ALP/tree/gh-pages/repo/releases/</url>
-		</repository>
-	</repositories>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -52,24 +43,22 @@
 		</plugins>
 	</build>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.lohika.alp</groupId>
-			<artifactId>alp-reporter</artifactId>
-			<version>0.6</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.lohika.alp</groupId>
-			<artifactId>alp-reporter-client</artifactId>
-			<version>0.6</version>
-		</dependency>
-
+	<dependencies>		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate</artifactId>
 			<version>3.2.6.ga</version>
 			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
