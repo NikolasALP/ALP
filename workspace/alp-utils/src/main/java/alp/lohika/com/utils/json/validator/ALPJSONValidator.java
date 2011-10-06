@@ -1,14 +1,32 @@
+//Copyright 2011 Lohika .  This file is part of ALP.
+//
+//    ALP is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    ALP is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with ALP.  If not, see <http://www.gnu.org/licenses/>.
+
 package alp.lohika.com.utils.json.validator;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -18,179 +36,210 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * 
- * @author "Anton Smorodsky"
- * 
+ * @author "Anton Smorodsky" Validate JSON data against given JSON Schema
  */
 
 public class ALPJSONValidator {
 
-	private boolean				Json_jump;
-	private boolean				callPass;
-	private LinkedList<String>	streamName;
-	private LinkedList<byte[]>	fileBArray;
-	private LinkedList<String>	JsonSequence;
-	private LinkedList<String>	ObjectsList;
-	private LinkedList<String>	ParentsList;
-	private LinkedList<String>	error;
+	private boolean				first_try;		// holds us from dig into JSON schema dipper then	
+	private File[]				schemasList;	// Array of all JSON schemas 
+	private LinkedList<String>	JSONStack;		// List of all JSON objects that stand before current object  
+	private LinkedList<String>	ErrorsStack;	// Collect found errors at this List  
 	private JsonFactory			JSONFactory;
-	private ObjectMapper		mapper;
+	private ObjectMapper		JSONMapper;
+	private String				schemaName;
 
 	/**
 	 * 
-	 * @param JSONroot
-	 *            - represent path to folder with all *.json
+	 * @param JSONSchemasPath
+	 *            - represent path to folder with all schemas
+	 * @param schemaName
+	 *            - schema from which validation should start
 	 * @throws IOException
 	 */
-	public ALPJSONValidator(String JSONroot) throws IOException {
+	public ALPJSONValidator(String JSONSchemasPath, String in_schemaName) throws IOException {
+		schemaName = in_schemaName;
 		JSONFactory = new JsonFactory();
-		JsonSequence = new LinkedList<String>();
-		ObjectsList = new LinkedList<String>();
-		ParentsList = new LinkedList<String>();
-		streamName = new LinkedList<String>();
-		error = new LinkedList<String>();
-		fileBArray = new LinkedList<byte[]>();
-		Json_jump = false;
-		mapper = new ObjectMapper();
-		File dir = new File(JSONroot);
-		File[] flist = dir.listFiles();
-		for (int i = 0; i < flist.length; i++)
-			if (flist[i].getName().endsWith("json")) {
-				fileBArray.add(new byte[(int) flist[i].length()]);
-				FileInputStream fis = new FileInputStream(flist[i]);
-				fis.read(fileBArray.getLast());
-				fis.close();
-				streamName.add(flist[i].getName()); // name of json schema without '.json'				
+		JSONStack = new LinkedList<String>();
+		ErrorsStack = new LinkedList<String>();
+		first_try = true;
+		JSONMapper = new ObjectMapper();
+		File dir = new File(JSONSchemasPath);
+		FilenameFilter jsonFilter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(".json");
 			}
+		};
+		schemasList = dir.listFiles(jsonFilter);
 	}
 
-	public String getError() {
+	// TODO - Need to think how better output found problems . This not expected way for sure
+	public String ErrorsToString() {
 		String buf = "";
-		for (int i = 0; i < error.size(); i++)
-			buf += error.get(i);
+		for (int i = 0; i < ErrorsStack.size(); i++) {
+			buf += ErrorsStack.get(i);
+			buf += ";";
+		}
 		return buf;
 	}
 
-	public boolean ValidateJSON(String json_path, String schema_path) throws IOException {
-		try {
-			Reader in = new InputStreamReader(new FileInputStream(json_path), "UTF-8");
-			JsonNode respObj = mapper.readTree(in);
-			LinkedList<String> schemaDirection = new LinkedList<String>();
-			schemaDirection.add(schema_path);
-			boolean is_valid = validateObject(respObj, "JSON", schemaDirection);
-			for (int i = 0; i < ObjectsList.size(); i++)
-				error.add("'" + ObjectsList.get(i) + "' not belongs to '" + ParentsList.get(i)
-						+ "'");
-			ObjectsList.clear();
-			ParentsList.clear();
-			JsonSequence.clear();
-			return is_valid;
-		} catch (IllegalStateException e) {
-			return false;
-		}
-
+	public void WriteToLog(Logger lg, Level lvl) {
+		for (int i = 0; i < ErrorsStack.size(); i++)
+			lg.log(lvl, ErrorsStack.get(i));
 	}
 
-	private boolean SearchInErrors(String objName, String parentName) {
-		for (int i = 0; i < ObjectsList.size(); i++)
-			if (ObjectsList.get(i).equals(objName) && ParentsList.get(i).equals(parentName)) return true;
-		return false;
+	public LinkedList<String> getErrorsList() {
+		return ErrorsStack;
 	}
 
+	/**
+	 * 
+	 * Main function used for validations
+	 * 
+	 * @param pathToJSON
+	 *            - where to find file with json to validate
+	 * @return true if schema valid and false if wrong
+	 * @throws IOException
+	 */
+	public boolean ValidateJSON(String pathToJSON) throws IOException {
+
+		JSONStack.clear();
+		ErrorsStack.clear();
+		first_try = true;
+		Reader in = new InputStreamReader(new FileInputStream(pathToJSON), "UTF-8");
+		JsonNode rootObj = JSONMapper.readTree(in);
+		LinkedList<String> schemaStack = new LinkedList<String>();
+		schemaStack.add(schemaName);
+		return validateObject(rootObj, "JSON", schemaStack);
+	}
+
+	public boolean ValidateJSON(File JSONFile) throws IOException {
+
+		JSONStack.clear();
+		ErrorsStack.clear();
+		first_try = true;
+		Reader in = new InputStreamReader(new FileInputStream(JSONFile), "UTF-8");
+		JsonNode rootObj = JSONMapper.readTree(in);
+		LinkedList<String> schemaStack = new LinkedList<String>();
+		schemaStack.add(schemaName);
+		return validateObject(rootObj, "JSON", schemaStack);
+	}
+
+	/**
+	 * 
+	 * This function recursively goes over all elements in JSON and answer if
+	 * each one is correct.
+	 * 
+	 * @param feedObj
+	 *            - JsonNode object that currently under verification
+	 * @param parentName
+	 *            - name of parent of current element
+	 * @param schemaStack
+	 *            - Linked List that store list of currently read schemas
+	 * @return
+	 * @throws JsonParseException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	private boolean validateObject(JsonNode feedObj, String parentName,
-			LinkedList<String> schemaDirection) throws JsonParseException, FileNotFoundException,
+			LinkedList<String> schemaStack) throws JsonParseException, FileNotFoundException,
 			IOException {
 		Iterator<JsonNode> Inode = feedObj.getElements();
 		Iterator<String> Istring = feedObj.getFieldNames();
-		boolean NotEmptyString = true;
 		while (Inode.hasNext()) {
 			String str = Istring.next();
-			JsonSequence.add(str);
 			JsonNode nod = Inode.next();
-			LinkedList<JSONTypes> test;
-			LinkedList<String> inst1 = new LinkedList<String>();
-			LinkedList<String> l_tmp = new LinkedList<String>();
-			l_tmp.addAll(schemaDirection);
-			if (SearchInErrors(GeneratePath(), parentName)) {
-				JsonSequence.removeLast();
-				continue;
-			} else {
-				Json_jump = false;
-				test = recursiveValidateAgainstSchemaWhile(str, parentName, inst1, l_tmp);
+			JSONStack.add(str);
+			LinkedList<String> t_schemaStack = new LinkedList<String>();
+			t_schemaStack.addAll(schemaStack);
+			LinkedList<JSONTypes> TypesList = getItemTypeFromSchema(str, parentName,
+					new LinkedList<String>(), t_schemaStack);
+			if (TypesList == null) ErrorsStack.add("'" + GeneratePath() + "' not belongs to '"
+					+ parentName + "'");
+			else {
+				JSONTypes realType = detectType(TypesList, nod);
+				if (realType == JSONTypes.object) {
+					LinkedList<String> t_SchemaStack2 = new LinkedList<String>();
+					t_SchemaStack2.addAll(t_schemaStack);
+					validateObject(nod, str, t_SchemaStack2);
+				} else if (realType == JSONTypes.array) {
+					LinkedList<String> t_SchemaStack2 = new LinkedList<String>();
+					t_SchemaStack2.addAll(t_schemaStack);
+					validateArray(nod, str, t_SchemaStack2);
+				} else if (realType == JSONTypes.string && nod.getTextValue().isEmpty()) ErrorsStack
+						.add("Item '" + GeneratePath() + "' is empty");
 			}
-			if (test != null) {
-				callPass = false;
-				String realType = "";
-				int recursive_choice = -1;
-				for (int l = 0; l < test.size() && (!callPass); l++) {
-					JSONTypes type1 = test.get(l);
-					if (realType.isEmpty()) realType = "'" + type1.toString() + "'";
-					else
-						realType += "  or '" + type1.toString() + "'";
-					switch (type1) {
-						case object:
-							callPass = nod.isObject();
-							recursive_choice = 1;
-						break;
-						case array:
-							callPass = nod.isArray();
-							recursive_choice = 2;
-						break;
-						case string:
-							if (nod.isTextual()) {
-								if (nod.getTextValue().isEmpty()) {
-									error.add("Item '" + GeneratePath() + "' is empty");
-									NotEmptyString = false;
-								} else
-									callPass = true;
-							}
-						break;
-						case integer:
-							callPass = nod.isNumber();
-						break;
-						case any:
-							callPass = true;
-						break;
-						default:
-							error.add("schema type - '" + type1.toString()
-									+ "' is not defined in schema");
-					}
-				}
-
-				if (callPass == true) {
-					if (recursive_choice == 1) {
-						recursive_choice = -1;
-						LinkedList<String> l_tmp2 = new LinkedList<String>();
-						l_tmp2.addAll(l_tmp);
-						validateObject(nod, str, l_tmp2);
-					}
-					if (recursive_choice == 2) {
-						recursive_choice = -1;
-						LinkedList<String> l_tmp2 = new LinkedList<String>();
-						l_tmp2.addAll(l_tmp);
-						validateArray(nod, str, l_tmp2);
-					}
-				} else if (NotEmptyString == true) {
-					JsonToken tok = nod.asToken();
-					error.add("'" + GeneratePath() + "' should be " + realType + "  but nod is -'"
-							+ tok.name() + "' in a fact.");
-				}
-				NotEmptyString = true;
-			} else {
-				error.add("'" + GeneratePath() + "is not defined in schema");
-				return false;
-			}
-			JsonSequence.removeLast();
+			JSONStack.removeLast();
 		}
-		if (error.isEmpty()) return true;
+		if (ErrorsStack.isEmpty()) return true;
 		else
 			return false;
 	}
 
-	private LinkedList<JSONTypes> recursiveValidateAgainstSchemaWhile(String objName,
-			String parentName, LinkedList<String> objects, LinkedList<String> schemaPath)
+	private JSONTypes detectType(LinkedList<JSONTypes> JSONTypeList, JsonNode nod) {
+		for (int i = 0; i < JSONTypeList.size(); i++) {
+			JSONTypes type = JSONTypeList.get(i);
+			switch (type) {
+				case object:
+					if (nod.isObject()) return type;
+				break;
+				case array:
+					if (nod.isArray()) return type;
+				break;
+				case string:
+					if (nod.isTextual()) return type;
+				break;
+				case integer:
+					if (nod.isNumber()) return type;
+				break;
+				case any:
+				case jboolean: // !!!! need to remove jboolean it is not supported in upstream
+					return type;
+				default:
+					ErrorsStack.add("schema type - '" + type.toString()
+							+ "' is not defined in schema");
+					return null;
+			}
+		}
+		addError(nod, JSONTypesToString(JSONTypeList));
+		return null;
+	}
+
+	private String JSONTypesToString(LinkedList<JSONTypes> JSONTypeList) {
+		String str = "";
+		for (int i = 0; i < JSONTypeList.size(); i++)
+			if (i == 0) str = "'" + JSONTypeList.get(0).toString() + "'";
+			else
+				str += "  or '" + JSONTypeList.get(i).toString() + "'";
+		return str;
+	}
+
+	private void addError(JsonNode nod, String realType) {
+		ErrorsStack.add("'" + GeneratePath() + "' should be " + realType + "  but nod is -'"
+				+ nod.asToken().name() + "' in a fact.");
+	}
+
+	/**
+	 * 
+	 * @param elementName
+	 *            - name of element to find in JSON Schema
+	 * @param parentName
+	 *            - name of parent of element to find in JSON Schema
+	 * @param schemaObjects
+	 *            - List of object that was verified before
+	 * @param schemaStack
+	 *            - List of schemas that was read before
+	 * @return null if object not found in schema and List of types if found
+	 * @throws JsonParseException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+
+	private LinkedList<JSONTypes> getItemTypeFromSchema(String elementName, String parentName,
+			LinkedList<String> schemaObjects, LinkedList<String> schemaStack)
 			throws JsonParseException, FileNotFoundException, IOException {
 		try {
-			JsonParser schemaParser = getParser(schemaPath.getLast());
+			JsonParser schemaParser = getParser(schemaStack.getLast());
 			String tmp, tmp2;
 			LinkedList<JSONTypes> to_ret = new LinkedList<JSONTypes>();
 			JsonToken tok;
@@ -199,30 +248,30 @@ public class ALPJSONValidator {
 				tmp = schemaParser.getCurrentName();
 				switch (tok) {
 					case START_OBJECT:
-						if (tmp != null) objects.add(tmp);
+						if (tmp != null) schemaObjects.add(tmp);
 					break;
 					case END_OBJECT:
 						if (tmp != null) {
-							tmp2 = objects.removeLast();
+							tmp2 = schemaObjects.removeLast();
 							if (!tmp2.equals(tmp)) throw new IllegalStateException(
-									"Wrong structure in schema '" + schemaPath.getLast()
+									"Wrong structure in schema '" + schemaStack.getLast()
 											+ "'. Removing object='" + tmp2 + "'. While have '"
 											+ tmp + "' at the end.");
 						}
 					break;
 					case FIELD_NAME:
 						tmp = schemaParser.getCurrentName();
-						if (tmp != null && tmp.equals(objName)) {
+						if (tmp != null && tmp.equals(elementName)) {
 							boolean b1 = false;
-							if (objects.isEmpty()) {
+							if (schemaObjects.isEmpty()) {
 								tmp = "JSON";
 								b1 = true;
-							} else if (objects.size() != 1) {
-								tmp = objects.getLast();
+							} else if (schemaObjects.size() != 1) {
+								tmp = schemaObjects.getLast();
 								if (tmp.equals("properties") || tmp.equals("items")) {
-									tmp = objects.get(objects.size() - 2);
-									if (tmp.equals("properties") || tmp.equals("items")) tmp = objects
-											.get(objects.size() - 3);
+									tmp = schemaObjects.get(schemaObjects.size() - 2);
+									if (tmp.equals("properties") || tmp.equals("items")) tmp = schemaObjects
+											.get(schemaObjects.size() - 3);
 									b1 = true;
 								}
 							}
@@ -242,26 +291,26 @@ public class ALPJSONValidator {
 										else if (tok == JsonToken.END_ARRAY) return to_ret;
 									}
 								} else if (tok == JsonToken.START_OBJECT) {
-									error.add("Using START_OBJECT skip!!! for token :'"
+									ErrorsStack.add("Using START_OBJECT skip!!! for token :'"
 											+ schemaParser.getText() + "'");
 									continue;
 								}
 								tmp = "/";
-								for (int i = 0; i < objects.size(); i++)
-									tmp += objects.get(i) + "/";
-								tmp += objName;
+								for (int i = 0; i < schemaObjects.size(); i++)
+									tmp += schemaObjects.get(i) + "/";
+								tmp += elementName;
 								throw new IllegalStateException(
 										"Unexpected content after 'type' record under '" + tmp
 												+ "' in schema");
 							}
-						} else if (tmp.equals("$ref") && !Json_jump) {
+						} else if (tmp.equals("$ref") && first_try) {
 							schemaParser.nextToken();
 							tmp = schemaParser.getText();
-							schemaPath.add(tmp);
-							Json_jump = true;
-							LinkedList<JSONTypes> recursive_resp = recursiveValidateAgainstSchemaWhile(
-									objName, parentName, objects, schemaPath);
-							Json_jump = false;
+							schemaStack.add(tmp);
+							first_try = false;
+							LinkedList<JSONTypes> recursive_resp = getItemTypeFromSchema(
+									elementName, parentName, schemaObjects, schemaStack);
+							first_try = true;
 							if (recursive_resp != null) return recursive_resp;
 						}
 					break;
@@ -269,36 +318,29 @@ public class ALPJSONValidator {
 
 			}
 			schemaParser.close();
-			if (schemaPath.isEmpty()) return null;
-			schemaPath.removeLast();
+			if (schemaStack.isEmpty()) return null;
+			schemaStack.removeLast();
 		} catch (JsonParseException jp) {
-			error.add(jp.getMessage());
+			ErrorsStack.add(jp.getMessage());
 			throw jp;
-		} catch (FileNotFoundException fe) {
-			error.add(fe.getMessage());
-			throw fe;
-		} catch (IllegalArgumentException ee) {
-			error.add(ee.getMessage());
-			throw ee;
 		}
 		return null;
 	}
 
 	private String GeneratePath() {
 		String out = "/";
-		for (int i = 0; i < JsonSequence.size(); i++)
-			out += JsonSequence.get(i) + "/";
+		for (int i = 0; i < JSONStack.size(); i++)
+			out += JSONStack.get(i) + "/";
 		return out;
 	}
 
-	private void validateArray(JsonNode feedArray, String parentName,
-			LinkedList<String> schemaDirection) throws JsonParseException, FileNotFoundException,
-			IOException {
+	private void validateArray(JsonNode feedArray, String parentName, LinkedList<String> schemaStack)
+			throws JsonParseException, FileNotFoundException, IOException {
 		Iterator<JsonNode> Inode = feedArray.getElements();
 		while (Inode.hasNext()) {
-			LinkedList<String> tmp = new LinkedList<String>();
-			tmp.addAll(schemaDirection);
-			validateObject(Inode.next(), parentName, tmp);
+			LinkedList<String> t_schemaStack = new LinkedList<String>();
+			t_schemaStack.addAll(schemaStack);
+			validateObject(Inode.next(), parentName, t_schemaStack);
 		}
 	}
 
@@ -311,9 +353,9 @@ public class ALPJSONValidator {
 	 * @throws IOException
 	 */
 	public JsonParser getParser(String parserName) throws JsonParseException, IOException {
-		for (int i = 0; i < streamName.size(); i++)
-			if (streamName.get(i).equals(parserName)) return JSONFactory
-					.createJsonParser(fileBArray.get(i));
+		for (int i = 0; i < schemasList.length; i++)
+			if (schemasList[i].getName().equals(parserName)) return JSONFactory
+					.createJsonParser(schemasList[i]);
 		throw new IllegalArgumentException("JSON Schema with name '" + parserName
 				+ "' does not exists");
 	}
