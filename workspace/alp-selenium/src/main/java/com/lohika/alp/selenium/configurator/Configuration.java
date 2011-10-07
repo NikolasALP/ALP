@@ -81,7 +81,7 @@ public class Configuration {
 		} catch (IOException e)
         {
         	jsErrorAutolog = false;
-            log.error("Load properties",e.getCause());
+            log.error("Load properties failed: unable to open file 'environment.properties'", e.getCause());
         }
 	}
 	
