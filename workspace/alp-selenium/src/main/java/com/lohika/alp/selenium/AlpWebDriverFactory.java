@@ -26,6 +26,7 @@ import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.events.WebDriverEventListener;
 
+import com.lohika.alp.selenium.configurator.WebDriverConfigurator;
 import com.lohika.alp.selenium.log.LogElementsSeleniumFactory;
 import com.lohika.alp.selenium.log.LogElementsSeleniumFactoryJAXB;
 import com.lohika.alp.selenium.log.LoggingWebDriver;
@@ -46,12 +47,16 @@ public class AlpWebDriverFactory {
 
 		WebDriver driver;
 
+		// Set name of WebDriver to be shown in log
+		String name = capabilities.getBrowserName();
+		
+		// Configure capabilities for webdriver to use js error catcher (only FF support now)
+		WebDriverConfigurator webDriverConfigurator = new WebDriverConfigurator(name);
+		capabilities = webDriverConfigurator.configure(capabilities);
+		
 		// Create remote WebDriver instance
 		driver = new RemoteWebDriverTakeScreenshotFix(commandExecutor,
 				capabilities);
-
-		// Set name of WebDriver to be shown in log
-		String name = capabilities.getBrowserName();
 
 		// Set factory for log objects
 		LogElementsSeleniumFactory logObjectsFactory = new LogElementsSeleniumFactoryJAXB();

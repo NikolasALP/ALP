@@ -34,6 +34,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
+import com.lohika.alp.selenium.configurator.Configuration;
+import com.lohika.alp.selenium.jscatcher.FirefoxJsErrorCathcer;
+import com.lohika.alp.selenium.jscatcher.JSErrorCatcher;
+
 public class LoggingWebDriver implements WebDriver, JavascriptExecutor,
 		HasInputDevices, HasCapabilities, TakesScreenshot, WrapsDriver,
 		DescribedElement {
@@ -124,6 +128,7 @@ public class LoggingWebDriver implements WebDriver, JavascriptExecutor,
 
 	@Override
 	public void close() {
+		logJsErrors();
 		logger.info(factory.close(this));
 
 		driver.close();
@@ -131,7 +136,9 @@ public class LoggingWebDriver implements WebDriver, JavascriptExecutor,
 
 	@Override
 	public void quit() {
+		logJsErrors();
 		logger.info(factory.quit(this));
+
 		driver.quit();
 	}
 
@@ -232,4 +239,13 @@ public class LoggingWebDriver implements WebDriver, JavascriptExecutor,
 				"Underlying driver instance does not support input devices");
 	}
 
+	private void logJsErrors() {
+		if (!Configuration.getInstance().getJsErrorAutolog())
+			return;
+		JSErrorCatcher catcher = new FirefoxJsErrorCathcer(driver);
+		ArrayList<String> errors = catcher.getJsErrors();
+		if (errors.size()>0)
+			logger.error(errors.toString());
+
+	}
 }
