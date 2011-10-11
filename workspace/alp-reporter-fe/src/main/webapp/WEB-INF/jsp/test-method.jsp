@@ -1,20 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-Copyright 2011 Lohika .  This file is part of ALP.
-
-    ALP is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    ALP is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with ALP.  If not, see <http://www.gnu.org/licenses/>.
-   -->
 <jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
 	xmlns:c="http://java.sun.com/jstl/core_rt"
 	xmlns:form="http://www.springframework.org/tags/form"
@@ -33,6 +17,22 @@ Copyright 2011 Lohika .  This file is part of ALP.
 	<c:set var="contextPath" scope="page" value="${pageContext.request.contextPath}" />
 	
 	<html xmlns="http://www.w3.org/1999/xhtml">
+	<!--
+Copyright 2011 Lohika .  This file is part of ALP.
+
+    ALP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    ALP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with ALP.  If not, see <http://www.gnu.org/licenses/>.
+   -->	
 	<head>
 	<script type="text/javascript" src="${contextPath}/static/js/jquery.js">//</script>
 	<script type="text/javascript" src="${contextPath}/static/js/jquery.dataTables.js">//</script>

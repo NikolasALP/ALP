@@ -15,7 +15,7 @@
 		<param-name>log4jConfigLocation</param-name>
 		<param-value>/WEB-INF/log4j.properties</param-value>
 	</context-param>
-
+	
 	<resource-ref>
 		<description>Reporter Database</description>
 		<res-ref-name>jdbc/reporter</res-ref-name>

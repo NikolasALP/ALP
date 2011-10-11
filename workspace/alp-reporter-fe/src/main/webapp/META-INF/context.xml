@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/alp-reporter-fe">
+
+	<Resource name="jdbc/reporter" auth="Container" type="javax.sql.DataSource"
+		username="root"
+		password="" 
+		driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://alp-server/reporter" />
+
+</Context>

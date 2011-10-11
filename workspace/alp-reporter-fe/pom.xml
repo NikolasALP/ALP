@@ -5,7 +5,7 @@
 	<artifactId>alp-reporter-fe</artifactId>
 	<packaging>war</packaging>
 	<version>0.6</version>
-	<name>ALP Reporter Frontend</name>	
+	<name>ALP Reporter Frontend</name>
 	<properties>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
@@ -40,8 +40,8 @@
 
 	</build>
 
-	<dependencies>		
-		
+	<dependencies>
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -91,7 +91,7 @@
 		</dependency>
 
 		<!-- these dependencies are included here to create skinny war file -->
-		<!-- and put all the necessary dependencies into lib dir -->		
+		<!-- and put all the necessary dependencies into lib dir -->
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
@@ -161,6 +161,11 @@
 			<version>1.6.1</version>
 			<type>jar</type>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.transaction</groupId>
