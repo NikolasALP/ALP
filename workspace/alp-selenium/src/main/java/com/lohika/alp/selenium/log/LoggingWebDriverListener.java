@@ -62,7 +62,7 @@ public class LoggingWebDriverListener implements WebDriverEventListener {
 		JSErrorCatcher catcher = new FirefoxJsErrorCathcer(driver);
 		ArrayList<String> errors = catcher.getJsErrors();
 		if (errors!=null && errors.size()>0)
-			logger.error(errors.toString());
+			logger.warn(errors.toString());
 
 	}
 
@@ -81,7 +81,7 @@ public class LoggingWebDriverListener implements WebDriverEventListener {
 		JSErrorCatcher catcher = new FirefoxJsErrorCathcer(driver);
 		ArrayList<String> errors = catcher.getJsErrors();
 		if (errors!=null && errors.size()>0)
-			logger.error(errors.toString());
+			logger.warn(errors.toString());
 
 	}
 
