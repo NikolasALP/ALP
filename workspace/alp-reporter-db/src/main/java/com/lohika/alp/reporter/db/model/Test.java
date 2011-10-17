@@ -29,7 +29,7 @@ import javax.persistence.TemporalType;
 
 /**
  * testng.xml test section (suite subsection)
- *
+ * 
  */
 @Entity
 @Table(name = "TESTS")
@@ -38,23 +38,23 @@ public class Test {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ID")
-	Long id;
-	
+	Long	id;
+
 	@Column(name = "NAME")
-	String name;
-	
+	String	name;
+
 	@ManyToOne
 	@JoinColumn(name = "SUITE_ID")
-	Suite suite;
-	
+	Suite	suite;
+
 	@Temporal(value = TemporalType.TIMESTAMP)
 	@Column(name = "START_DATE")
-	Date startDate;
+	Date	startDate;
 
 	@Temporal(value = TemporalType.TIMESTAMP)
 	@Column(name = "FINISH_DATE")
-	Date finishDate;
-	
+	Date	finishDate;
+
 	public Date getStartDate() {
 		return startDate;
 	}

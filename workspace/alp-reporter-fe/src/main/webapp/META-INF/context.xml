@@ -3,7 +3,7 @@
 
 	<Resource name="jdbc/reporter" auth="Container" type="javax.sql.DataSource"
 		username="root"
-		password="" 
+		password="root" 
 		driverClassName="com.mysql.jdbc.Driver"
 		url="jdbc:mysql://alp-server/reporter" />
 
