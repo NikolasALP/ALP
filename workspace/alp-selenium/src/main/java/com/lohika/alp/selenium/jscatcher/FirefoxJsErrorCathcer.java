@@ -36,7 +36,9 @@ public class FirefoxJsErrorCathcer implements JSErrorCatcher {
 	 * @see com.lohika.alp.selenium.jscatcher.JSErrorCatcher#getJsErrors()
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<String> getJsErrors() {
+	public ArrayList<String> getJsErrors() throws JsErrorCatcherException {
+		if (JsErrorCatcherConfiguration.getInstance().getAllowDomains()==null)
+			throw new JsErrorCatcherException("Unable to get JS errors. Need to provide allowed domains in the config file");
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		String script = "netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect UniversalBrowserRead UniversalBrowserWrite UniversalPreferencesRead UniversalPreferencesWrite UniversalFileRead');";
 		script += "var consoleService = Components.classes[\"@mozilla.org/consoleservice;1\"].getService(Components.interfaces.nsIConsoleService);";

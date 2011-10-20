@@ -18,6 +18,6 @@ import java.util.ArrayList;
 
 public interface JSErrorCatcher {
 
-	public ArrayList<String> getJsErrors();
+	public ArrayList<String> getJsErrors() throws JsErrorCatcherException;
 	
 }

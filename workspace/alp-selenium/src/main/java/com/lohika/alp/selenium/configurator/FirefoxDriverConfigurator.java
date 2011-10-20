@@ -18,6 +18,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.lohika.alp.selenium.jscatcher.JsErrorCatcherConfiguration;
+
 /**
  * Java class which configures Firefox browser with custom profile
  * 
@@ -28,14 +30,14 @@ public class FirefoxDriverConfigurator implements IWebDriverConfigurator {
 
 	public DesiredCapabilities configure(DesiredCapabilities capabilities) {
 		
-		if (Configuration.getInstance().getHosts() == null)
+		if (JsErrorCatcherConfiguration.getInstance().getAllowDomains() == null)
 			return capabilities;
 
 		FirefoxProfile profile = new FirefoxProfile();
 		// enable access to XPCComponents
 		profile.setPreference("signed.applets.codebase_principal_support", true);
 		int i=0;
-		for (String host: Configuration.getInstance().getHosts()) {
+		for (String host: JsErrorCatcherConfiguration.getInstance().getAllowDomains()) {
 			profile.setPreference("capability.principal.codebase.p"+i+".granted", "UniversalXPConnect UniversalBrowserRead UniversalBrowserWrite UniversalPreferencesRead UniversalPreferencesWrite UniversalFileRead");
 			profile.setPreference("capability.principal.codebase.p"+i+".id", host);
 			i++;

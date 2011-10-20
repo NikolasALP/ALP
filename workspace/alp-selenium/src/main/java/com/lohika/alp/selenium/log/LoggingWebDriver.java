@@ -34,9 +34,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
-import com.lohika.alp.selenium.configurator.Configuration;
+import com.lohika.alp.selenium.jscatcher.JsErrorCatcherConfiguration;
 import com.lohika.alp.selenium.jscatcher.FirefoxJsErrorCathcer;
 import com.lohika.alp.selenium.jscatcher.JSErrorCatcher;
+import com.lohika.alp.selenium.jscatcher.JsErrorCatcherException;
 
 public class LoggingWebDriver implements WebDriver, JavascriptExecutor,
 		HasInputDevices, HasCapabilities, TakesScreenshot, WrapsDriver,
@@ -240,12 +241,16 @@ public class LoggingWebDriver implements WebDriver, JavascriptExecutor,
 	}
 
 	private void logJsErrors() {
-		if (!Configuration.getInstance().getJsErrorAutolog())
+		if (!JsErrorCatcherConfiguration.getInstance().getJsErrorAutolog())
 			return;
 		JSErrorCatcher catcher = new FirefoxJsErrorCathcer(driver);
-		ArrayList<String> errors = catcher.getJsErrors();
-		if (errors.size()>0)
-			logger.error(errors.toString());
-
+		ArrayList<String> errors;
+		try {
+			errors = catcher.getJsErrors();
+			if (errors.size()>0)
+				logger.error(errors.toString());
+		} catch (JsErrorCatcherException e) {
+			logger.warn(e.getMessage(), e.getCause());
+		}
 	}
 }
