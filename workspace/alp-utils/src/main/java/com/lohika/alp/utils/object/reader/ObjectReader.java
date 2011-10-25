@@ -12,10 +12,22 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with ALP.  If not, see <http://www.gnu.org/licenses/>.
+package com.lohika.alp.utils.object.reader;
 
-package alp.lohika.com.utils.json.validator;
+import java.util.List;
 
-// TODO - remove jboolean
-public enum JSONTypes {
-	object, array, string, integer, any, jboolean
+public interface ObjectReader {
+	
+	// open a file with data
+	public void open(String fileName) throws Exception;
+	
+	// read object of specific type with the index
+	public Object readObject(Class<?> type, int index) throws Exception;
+	
+	// read all objects of specific type
+	public List<?> readAllObjects(Class<?> type) throws Exception;
+	
+	// close file
+	public void close();
+
 }

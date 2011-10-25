@@ -12,7 +12,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with ALP.  If not, see <http://www.gnu.org/licenses/>.
-package alp.lohika.com.utils.object.reader;
+package com.lohika.alp.utils.object.reader;
 
 import java.io.File;
 import java.lang.reflect.Field;
