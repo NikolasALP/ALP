@@ -1,4 +1,0 @@
-ALP reporter client library is used to send test results to reporter front end 
-via REST XML protocol
-
-It should replace direct usage of reporter db library from test cases
