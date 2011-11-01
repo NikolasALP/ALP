@@ -2,13 +2,11 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.lohika.alp</groupId>
   <artifactId>re-parent</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6</version>
   <packaging>pom</packaging>
   <name>Recommendation Engine - Parent</name>
 
   <modules>
-    <module>alp-reporter-client</module>
-    <module>alp-reporter-db</module>
     <module>alp-reporter</module>
     <module>alp-selenium</module>
     <module>alp-utils</module>
