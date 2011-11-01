@@ -7,9 +7,9 @@
   <name>Recommendation Engine - Parent</name>
 
   <modules>
+    <module>alp-utils</module>
     <module>alp-reporter</module>
     <module>alp-selenium</module>
-    <module>alp-utils</module>
     <module>alp-reporter-fe</module>
   </modules>
 
