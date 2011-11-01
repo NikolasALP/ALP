@@ -1,0 +1,24 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.lohika.alp</groupId>
+  <artifactId>re-parent</artifactId>
+  <version>0.6</version>
+  <packaging>pom</packaging>
+  <name>Recommendation Engine - Parent</name>
+
+  <modules>
+    <module>alp-utils</module>
+    <module>alp-reporter</module>
+    <module>alp-selenium</module>
+    <module>alp-reporter-fe</module>
+  </modules>
+
+	<repositories>
+		<repository>
+		  <id>alp-repo</id>
+		  <name>ALP repository on GitHub</name>
+		  <url>http://lohika.github.com/ALP/repo/releases/</url>
+		</repository>
+	</repositories>
+
+</project>
