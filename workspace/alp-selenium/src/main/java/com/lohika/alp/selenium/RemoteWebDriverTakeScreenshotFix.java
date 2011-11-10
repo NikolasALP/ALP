@@ -14,6 +14,8 @@
 //    along with ALP.  If not, see <http://www.gnu.org/licenses/>.
 package com.lohika.alp.selenium;
 
+import java.net.URL;
+
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriverException;
@@ -29,6 +31,10 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public class RemoteWebDriverTakeScreenshotFix extends RemoteWebDriver implements
 		TakesScreenshot {
 
+	public RemoteWebDriverTakeScreenshotFix(URL remoteAddress, DesiredCapabilities capabilities) {
+		super(remoteAddress, capabilities);
+	}
+	
 	public RemoteWebDriverTakeScreenshotFix(CommandExecutor commandExecutor,
 			DesiredCapabilities capabilities) {
 		super(commandExecutor, capabilities);

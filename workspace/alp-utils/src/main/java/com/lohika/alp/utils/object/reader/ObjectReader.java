@@ -24,6 +24,9 @@ public interface ObjectReader {
 	// read object of specific type with the index
 	public Object readObject(Class<?> type, int index) throws Exception;
 	
+	// read object of specific type with the index
+	public Object readObject(Class<?> type, String index) throws Exception;
+	
 	// read all objects of specific type
 	public List<?> readAllObjects(Class<?> type) throws Exception;
 	

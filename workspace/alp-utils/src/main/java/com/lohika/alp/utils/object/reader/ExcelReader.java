@@ -28,24 +28,80 @@ public class ExcelReader implements ObjectReader {
 
 	protected String fileName;
 	private Workbook workbook;
+	private Sheet sheet;
+	protected boolean columnsHorizontal = true;
+	protected boolean namedIndex = false;
+	
+	public boolean isColumnsHorizontal() {
+		return columnsHorizontal;
+	}
+
+	public void setColumnsHorizontal(boolean columnsHorizontal) {
+		this.columnsHorizontal = columnsHorizontal;
+	}
+	
+	public boolean isNamedIndex() {
+		return namedIndex;
+	}
+
+	public void setNamedIndex(boolean namedIndex) {
+		this.namedIndex = namedIndex;
+	}
 	
 	public ExcelReader(String fileName) throws Exception {
 		this.open(fileName);
 	}
 	
+	public ExcelReader(String fileName, boolean columnsHorizontal, boolean namedIndex) throws Exception {
+		this.open(fileName);
+		setColumnsHorizontal(columnsHorizontal);
+		setNamedIndex(namedIndex);
+	}
+	
+	protected Cell[] getColumns() {
+		if (sheet==null)
+			return null;
+		if (isColumnsHorizontal())
+			return sheet.getRow(0);
+		else
+			return sheet.getColumn(0);
+	}
+	
+	protected Cell[] getRecord(int index) {
+		if (sheet==null)
+			return null;
+		if (isColumnsHorizontal())
+			return sheet.getRow(getIndex(index));
+		else
+			return sheet.getColumn(getIndex(index));
+	}
+	
+	private int getIndex(int index) {
+		return index+1;
+	}
+	
+	public Cell[] getIndexes() {
+		if (!isNamedIndex() || sheet==null)
+			return null;
+		if (isColumnsHorizontal())
+			return sheet.getColumn(0);
+		else
+			return sheet.getRow(0);
+	}
+	
 	public Object readObject(Class<?> type, int index) throws Exception {
-		Sheet sheet = workbook.getSheet(type.getSimpleName());
+		sheet = workbook.getSheet(type.getSimpleName());
 		if (sheet == null)
 			throw new Exception("Sheet of type '"+type.getName()+
 				"' is absent in the file '"+fileName+"'");
 		
 		// get fields of first row - each column value is a class field name
-		Cell[] columnFields = sheet.getRow(0);
+		Cell[] columnFields = getColumns();
 		
 		// get all fields from the class
 		Field[] classFields = type.getDeclaredFields();
 
-		Cell[] dataFields = sheet.getRow(index+1);
+		Cell[] dataFields = getRecord(index);
 		// instantiate object of specific type
 		Object item = type.getDeclaredConstructor().newInstance();
 
@@ -62,13 +118,13 @@ public class ExcelReader implements ObjectReader {
 	}
 
 	public List<?> readAllObjects(Class<?> type) throws Exception {
-		Sheet sheet = workbook.getSheet(type.getSimpleName());
+		sheet = workbook.getSheet(type.getSimpleName());
 		if (sheet == null)
 			throw new Exception("Sheet of type '"+type.getName()+
 				"' is absent in the file '"+fileName+"'");
 		
 		// get fields of first row - each column value is a class field name
-		Cell[] columnFields = sheet.getRow(0);
+		Cell[] columnFields = getColumns();
 		
 		// get all fields from the class
 		Field[] classFields = type.getDeclaredFields();
@@ -96,6 +152,7 @@ public class ExcelReader implements ObjectReader {
 
 	public void open(String fileName) throws Exception {
 		workbook = Workbook.getWorkbook(new File(fileName));
+		this.fileName = fileName;
 	}
 
 	public void close() {
@@ -113,6 +170,52 @@ public class ExcelReader implements ObjectReader {
 			if (cell[i].getContents().equals(fieldName))
 				return true;
 		return false;
+	}
+
+	public Object readObject(Class<?> type, String index) throws Exception {
+		if (index==null || type==null)
+			throw new Exception("Parameters should not be null");
+
+		sheet = workbook.getSheet(type.getSimpleName());
+
+		if (sheet == null)
+			throw new Exception("Sheet of type '"+type.getName()+
+				"' is absent in the file '"+fileName+"'");
+			
+		Integer objectIndex = null;
+		Cell[] indexes = getIndexes();
+		for (Cell cell: indexes) {
+			if (index.equals(cell.getContents()))
+				if (isColumnsHorizontal())
+					objectIndex = cell.getRow()-1;
+				else
+					objectIndex = cell.getColumn()-1;
+		}
+		
+		if (objectIndex==null)
+			throw new Exception("Record with '"+index+"' was not found");
+		
+		Cell[] columnFields = getColumns();
+		Field[] classFields = type.getDeclaredFields();
+		Cell[] dataFields = getRecord(objectIndex);
+		
+		// instantiate object of specific type
+		Object item = type.getDeclaredConstructor().newInstance();
+
+		for (int column=0; column<classFields.length; column++) {
+			if (fieldInArray(columnFields, classFields[column].getName()));
+			{
+					classFields[column].setAccessible(true);
+					if (isNamedIndex())
+						classFields[column].set(item,
+							dataFields[column+1].getContents());
+					else
+						classFields[column].set(item,
+							dataFields[column].getContents());
+			}
+		}
+
+		return item;
 	}
 
 }

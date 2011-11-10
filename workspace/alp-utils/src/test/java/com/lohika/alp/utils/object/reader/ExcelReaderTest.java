@@ -17,6 +17,7 @@ package com.lohika.alp.utils.object.reader;
 import java.util.List;
 
 import com.lohika.alp.utils.object.reader.ExcelReader;
+import com.lohika.alp.utils.object.reader.model.Advertisiment;
 import com.lohika.alp.utils.object.reader.model.User;
 
 import junit.framework.Test;
@@ -67,6 +68,28 @@ public class ExcelReaderTest
 
 		User user = (User) reader.readObject(User.class, 1);
 		System.out.println("Name:"+user.getName()+" Password:"+user.getPassword());
+		assertTrue( true );
+    }
+    
+    public void testExcelReaderObjectByName() throws Exception
+    {
+		ExcelReader reader = new ExcelReader("src/test/resources/login.xls");
+
+		reader.setNamedIndex(true);
+		Advertisiment ad = (Advertisiment) reader.readObject(Advertisiment.class, "a");
+		System.out.println("Name:"+ad.getName()+" Title:"+ad.getTitle());
+		assertTrue( true );
+    }
+    
+    
+    public void testExcelReaderObjectByNameVerticalColumns() throws Exception
+    {
+		ExcelReader reader = new ExcelReader("src/test/resources/vertical_columns.xls");
+
+		reader.setNamedIndex(true);
+		reader.setColumnsHorizontal(false);
+		Advertisiment ad = (Advertisiment) reader.readObject(Advertisiment.class, "a");
+		System.out.println("Name:"+ad.getName()+" Title:"+ad.getTitle());
 		assertTrue( true );
     }
 }
