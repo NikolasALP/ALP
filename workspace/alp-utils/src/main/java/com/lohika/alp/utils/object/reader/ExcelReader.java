@@ -15,14 +15,17 @@
 package com.lohika.alp.utils.object.reader;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 public class ExcelReader implements ObjectReader {
 
@@ -48,12 +51,16 @@ public class ExcelReader implements ObjectReader {
 		this.namedIndex = namedIndex;
 	}
 	
-	public ExcelReader(String fileName) throws Exception {
+	public ExcelReader(String fileName)
+			throws BiffException, IOException {
 		this.open(fileName);
 	}
 	
-	public ExcelReader(String fileName, boolean columnsHorizontal, boolean namedIndex) throws Exception {
-		this.open(fileName);
+	public ExcelReader(String fileName, boolean columnsHorizontal, boolean namedIndex)
+			throws BiffException, IOException {
+		URL url = getClass().getClassLoader().getResource(fileName);
+		if (url == null) throw new RuntimeException("Unable get resource '"+fileName+"'");
+		this.open(url.getPath());
 		setColumnsHorizontal(columnsHorizontal);
 		setNamedIndex(namedIndex);
 	}
@@ -89,10 +96,10 @@ public class ExcelReader implements ObjectReader {
 			return sheet.getRow(0);
 	}
 	
-	public Object readObject(Class<?> type, int index) throws Exception {
+	public Object readObject(Class<?> type, int index) throws ObjectReaderException {
 		sheet = workbook.getSheet(type.getSimpleName());
 		if (sheet == null)
-			throw new Exception("Sheet of type '"+type.getName()+
+			throw new ObjectReaderException("Sheet of type '"+type.getName()+
 				"' is absent in the file '"+fileName+"'");
 		
 		// get fields of first row - each column value is a class field name
@@ -102,16 +109,30 @@ public class ExcelReader implements ObjectReader {
 		Field[] classFields = type.getDeclaredFields();
 
 		Cell[] dataFields = getRecord(index);
-		// instantiate object of specific type
-		Object item = type.getDeclaredConstructor().newInstance();
-
-		for (int column=0; column<classFields.length; column++) {
-			if (fieldInArray(columnFields, classFields[column].getName()));
-			{
-					//System.out.println(dataFields[column].getContents());
-					classFields[column].setAccessible(true);
-					classFields[column].set(item, dataFields[column].getContents());
+		
+		Object item = null;
+		try {
+			// instantiate object of specific type
+			item = type.getDeclaredConstructor().newInstance();
+	
+			for (int column=0; column<classFields.length; column++) {
+				if (fieldInArray(columnFields, classFields[column].getName()));
+				{
+						//System.out.println(dataFields[column].getContents());
+						classFields[column].setAccessible(true);
+						classFields[column].set(item, dataFields[column].getContents());
+				}
 			}
+		} catch (NoSuchMethodException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
+		} catch (InstantiationException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
+		} catch (InvocationTargetException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
+		} catch (IllegalArgumentException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
+		} catch (IllegalAccessException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
 		}
 
 		return item;
@@ -150,7 +171,7 @@ public class ExcelReader implements ObjectReader {
 		return result;
 	}
 
-	public void open(String fileName) throws Exception {
+	public void open(String fileName) throws BiffException, IOException {
 		workbook = Workbook.getWorkbook(new File(fileName));
 		this.fileName = fileName;
 	}
@@ -172,14 +193,14 @@ public class ExcelReader implements ObjectReader {
 		return false;
 	}
 
-	public Object readObject(Class<?> type, String index) throws Exception {
+	public Object readObject(Class<?> type, String index) throws ObjectReaderException {
 		if (index==null || type==null)
-			throw new Exception("Parameters should not be null");
+			throw new ObjectReaderException("Parameters should not be null");
 
 		sheet = workbook.getSheet(type.getSimpleName());
 
 		if (sheet == null)
-			throw new Exception("Sheet of type '"+type.getName()+
+			throw new ObjectReaderException("Sheet of type '"+type.getName()+
 				"' is absent in the file '"+fileName+"'");
 			
 		Integer objectIndex = null;
@@ -193,26 +214,39 @@ public class ExcelReader implements ObjectReader {
 		}
 		
 		if (objectIndex==null)
-			throw new Exception("Record with '"+index+"' was not found");
+			throw new ObjectReaderException("Record with '"+index+"' was not found");
 		
 		Cell[] columnFields = getColumns();
 		Field[] classFields = type.getDeclaredFields();
 		Cell[] dataFields = getRecord(objectIndex);
-		
-		// instantiate object of specific type
-		Object item = type.getDeclaredConstructor().newInstance();
 
-		for (int column=0; column<classFields.length; column++) {
-			if (fieldInArray(columnFields, classFields[column].getName()));
-			{
-					classFields[column].setAccessible(true);
-					if (isNamedIndex())
-						classFields[column].set(item,
-							dataFields[column+1].getContents());
-					else
-						classFields[column].set(item,
-							dataFields[column].getContents());
+		Object item = null;
+		try {
+			// instantiate object of specific type
+			item = type.getDeclaredConstructor().newInstance();
+	
+			for (int column=0; column<classFields.length; column++) {
+				if (fieldInArray(columnFields, classFields[column].getName()));
+				{
+						classFields[column].setAccessible(true);
+						if (isNamedIndex())
+							classFields[column].set(item,
+								dataFields[column+1].getContents());
+						else
+							classFields[column].set(item,
+								dataFields[column].getContents());
+				}
 			}
+		} catch (NoSuchMethodException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
+		} catch (InstantiationException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
+		} catch (InvocationTargetException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
+		} catch (IllegalArgumentException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
+		} catch (IllegalAccessException e) {
+			throw new ObjectReaderException(e.getMessage(), e);
 		}
 
 		return item;

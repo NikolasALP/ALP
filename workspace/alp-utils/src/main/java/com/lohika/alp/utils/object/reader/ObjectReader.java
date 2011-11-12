@@ -22,10 +22,10 @@ public interface ObjectReader {
 	public void open(String fileName) throws Exception;
 	
 	// read object of specific type with the index
-	public Object readObject(Class<?> type, int index) throws Exception;
+	public Object readObject(Class<?> type, int index) throws ObjectReaderException;
 	
 	// read object of specific type with the index
-	public Object readObject(Class<?> type, String index) throws Exception;
+	public Object readObject(Class<?> type, String index) throws ObjectReaderException;
 	
 	// read all objects of specific type
 	public List<?> readAllObjects(Class<?> type) throws Exception;

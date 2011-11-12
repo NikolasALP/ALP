@@ -42,5 +42,9 @@ public class LogDescriptionBean {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public String toString() {
+		return getType()+" "+getName();
+	}
 
 }
